@@ -289,6 +289,8 @@ func (plugin *cniNetworkPlugin) addToNetwork(network *cniNetwork, podName string
 
 	netConf, cniNet := network.NetworkConfig, network.CNIConfig
 	glog.V(4).Infof("About to add CNI network %v (type=%v)", netConf.Name, netConf.Plugins[0].Network.Type)
+	plugin.Lock()
+	defer plugin.Unlock()
 	res, err := cniNet.AddNetworkList(netConf, rt)
 	if err != nil {
 		glog.Errorf("Error adding network: %v", err)
@@ -307,6 +309,8 @@ func (plugin *cniNetworkPlugin) deleteFromNetwork(network *cniNetwork, podName s
 
 	netConf, cniNet := network.NetworkConfig, network.CNIConfig
 	glog.V(4).Infof("About to del CNI network %v (type=%v)", netConf.Name, netConf.Plugins[0].Network.Type)
+	plugin.Lock()
+	defer plugin.Unlock()
 	err = cniNet.DelNetworkList(netConf, rt)
 	if err != nil {
 		glog.Errorf("Error deleting network: %v", err)
